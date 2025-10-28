@@ -1,0 +1,26 @@
+[
+  {
+    "id": "initial-1",
+    "title": "Producto de ejemplo",
+    "description": "Producto creado para prueba",
+    "code": "EX-001",
+    "price": 1000,
+    "status": true,
+    "stock": 10,
+    "category": "varios",
+    "thumbnails": []
+  },
+  {
+    "id": "1761623714723-1835",
+    "title": "Zapatillas",
+    "description": "Zapas de running",
+    "code": "SHOES001",
+    "price": 8999,
+    "status": true,
+    "stock": 20,
+    "category": "calzado",
+    "thumbnails": [
+      "/imgs/z1.png"
+    ]
+  }
+]
