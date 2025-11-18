@@ -1,49 +1,55 @@
 const express = require('express');
-const ProductManager = require('../managers/ProductManager');
-
 const router = express.Router();
-const pm = new ProductManager();
 
-router.get('/', async (req, res, next) => {
-  try {
-    const products = await pm.getProducts();
-    res.json({ status: 'success', payload: products });
-  } catch (err) { next(err); }
+const ProductManager = require('../managers/ProductManager');
+const productManager = new ProductManager();
+
+
+router.get('/', async (req, res) => {
+    const products = await productManager.getProducts();
+    res.json(products);
 });
 
-router.get('/:pid', async (req, res, next) => {
-  try {
-    const product = await pm.getProductById(req.params.pid);
-    if (!product) return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
-    res.json({ status: 'success', payload: product });
-  } catch (err) { next(err); }
+
+router.get('/:pid', async (req, res) => {
+    const product = await productManager.getProductById(req.params.pid);
+    if (!product) return res.status(404).json({ error: "Producto no encontrado" });
+    res.json(product);
 });
 
-router.post('/', async (req, res, next) => {
-  try {
-    const newProduct = await pm.addProduct(req.body);
-    res.status(201).json({ status: 'success', payload: newProduct });
-  } catch (err) {
-    res.status(400).json({ status: 'error', message: err.message });
-  }
+
+router.post('/', async (req, res) => {
+    try {
+        const newProduct = await productManager.addProduct(req.body);
+
+        // Emitir a websockets
+        const io = req.app.get('io');
+        io.emit('product-added', newProduct);
+
+        res.status(201).json(newProduct);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 });
 
-router.put('/:pid', async (req, res, next) => {
-  try {
-    const updated = await pm.updateProduct(req.params.pid, req.body);
-    if (!updated) return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
-    res.json({ status: 'success', payload: updated });
-  } catch (err) {
-    res.status(400).json({ status: 'error', message: err.message });
-  }
+
+router.put('/:pid', async (req, res) => {
+    const updated = await productManager.updateProduct(req.params.pid, req.body);
+    if (!updated) return res.status(404).json({ error: "Producto no encontrado" });
+    res.json(updated);
 });
 
-router.delete('/:pid', async (req, res, next) => {
-  try {
-    const ok = await pm.deleteProduct(req.params.pid);
-    if (!ok) return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
-    res.json({ status: 'success', message: 'Producto eliminado' });
-  } catch (err) { next(err); }
+
+router.delete('/:pid', async (req, res) => {
+    const deleted = await productManager.deleteProduct(req.params.pid);
+
+    if (!deleted) return res.status(404).json({ error: "Producto no encontrado" });
+
+    // Emitir evento de eliminación
+    const io = req.app.get('io');
+    io.emit('product-deleted', req.params.pid);
+
+    res.json({ status: "success" });
 });
 
 module.exports = router;

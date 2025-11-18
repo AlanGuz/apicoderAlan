@@ -11,16 +11,14 @@
     "thumbnails": []
   },
   {
-    "id": "1761623714723-1835",
-    "title": "Zapatillas",
-    "description": "Zapas de running",
-    "code": "SHOES001",
-    "price": 8999,
+    "id": "1763502257798-4567",
+    "title": "Gorra negra",
+    "description": "Gorra básica color negro",
+    "code": "GN001",
+    "price": 3500,
     "status": true,
-    "stock": 20,
-    "category": "calzado",
-    "thumbnails": [
-      "/imgs/z1.png"
-    ]
+    "stock": 10,
+    "category": "accesorios",
+    "thumbnails": []
   }
 ]
