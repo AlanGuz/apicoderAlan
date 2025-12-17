@@ -9,12 +9,16 @@ class CartService {
     return this.dao.create();
   }
 
-  async getById(cid) {
-    return this.dao.getById(cid);
+  async getById(id) {
+    return this.dao.getById(id);
   }
 
   async addProduct(cid, pid, qty) {
     return this.dao.addProduct(cid, pid, qty);
+  }
+
+  async removeProduct(cid, pid) {
+    return this.dao.removeProduct(cid, pid);
   }
 
   async updateCartProducts(cid, productsArray) {
@@ -25,13 +29,10 @@ class CartService {
     return this.dao.updateProductQuantity(cid, pid, qty);
   }
 
-  async removeProduct(cid, pid) {
-    return this.dao.removeProduct(cid, pid);
-  }
-
   async clearCart(cid) {
     return this.dao.clearCart(cid);
   }
 }
 
 module.exports = CartService;
+

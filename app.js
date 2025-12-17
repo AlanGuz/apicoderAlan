@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const { Server } = require('socket.io');
 
-const  connectDB = require('./src/config/database');
+const connectDB = require('./src/config/database');
 
 const productRoutes = require('./src/routes/product.routes');
 const cartRoutes = require('./src/routes/cart.routes');
@@ -21,30 +21,37 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // HANDLEBARS
 const exphbs = require('express-handlebars');
-app.engine('handlebars', exphbs.engine());
+
+const hbs = exphbs.create({
+  helpers: {
+    eq: (a, b) => a == b,
+    add: (a, b) => a + b,
+    subtract: (a, b) => a - b
+  }
+});
+
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'src', 'views'));
-
 // ROUTES
 app.use('/api/products', productRoutes);
 app.use('/api/carts', cartRoutes);
 app.use('/', viewsRoutes);
 
-// ERROR handler
+// ERROR HANDLER
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ status: 'error', message: 'Error interno del servidor' });
 });
 
-// START
-
-const server =  app.listen(PORT, async () => {
+// START SERVER
+const server = app.listen(PORT, async () => {
   await connectDB(process.env.MONGO_URL);
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
   console.log("MONGO_URL desde app.js:", process.env.MONGO_URL);
 });
 
-// SOCKET IO
+// SOCKET.IO
 const io = new Server(server);
 app.set('io', io);
 
@@ -54,7 +61,6 @@ io.on('connection', (socket) => {
   socket.on('new-product', async (data) => {
     try {
       const newProd = await productService.create(data);
-      // Emitimos con documento nuevo
       io.emit('product-added', newProd);
     } catch (err) {
       console.error('Error creando producto via socket', err);

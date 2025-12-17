@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 });
 
 // LISTA DE PRODUCTOS CON PAGINACIÓN
-router.get('/products', async (req, res) => {
+router.get('/products', async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
     
@@ -44,7 +44,7 @@ router.get('/products', async (req, res) => {
 });
 
 // DETALLE DE PRODUCTO
-router.get('/products/:pid', async (req, res) => {
+router.get('/products/:pid', async (req, res, next) => {
   try {
     const product = await productService.getById(req.params.pid);
     if (!product) return res.status(404).send("Producto no encontrado");
@@ -56,7 +56,7 @@ router.get('/products/:pid', async (req, res) => {
 });
 
 // DETALLE DE CARRITO
-router.get('/carts/:cid', async (req, res) => {
+router.get('/carts/:cid', async (req, res, next) => {
   try {
     const cart = await cartService.getById(req.params.cid);
     if (!cart) return res.status(404).send("Carrito no encontrado");
